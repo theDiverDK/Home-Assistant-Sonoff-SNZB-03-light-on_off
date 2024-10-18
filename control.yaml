@@ -22,7 +22,7 @@ blueprint:
     delay_time:
       name: Delay Time
       description: The time to wait (in minutes) after no motion is detected before turning off the lights.
-      default: 1
+      default: 5
       selector:
         number:
           min: 1
@@ -38,6 +38,9 @@ trigger:
     to: "off"
 
 action:
+  - variables:
+      delay_time: !input delay_time
+
   - choose:
       # If the motion sensor turns on, turn on the lights
       - conditions:
@@ -54,7 +57,7 @@ action:
             state: "off"
         sequence:
           - delay: 
-              minutes: !input delay_time
+              minutes: "{{ delay_time | int -1}}" 
           - service: homeassistant.turn_off
             target: !input target_lights
 
